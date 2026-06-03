@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - API de Scripts</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0f172a; color: #e2e8f0; font-family: Arial, sans-serif; }
+    header { background: #1e293b; padding: 20px 40px; border-bottom: 2px solid #f59e0b; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { color: #f59e0b; font-size: 22px; }
+    header a { color: #94a3b8; text-decoration: none; font-size: 14px; }
+    header a:hover { color: #f59e0b; }
+    .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+    .card { background: #1e293b; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+    .card h2 { color: #f59e0b; margin-bottom: 16px; font-size: 18px; }
+    input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #e2e8f0; margin-bottom: 12px; font-size: 14px; }
+    button { padding: 10px 24px; border-radius: 8px; border: none; background: #f59e0b; color: #0f172a; cursor: pointer; font-size: 14px; font-weight: bold; }
+    button:hover { background: #d97706; }
+    .resultado { margin-top: 16px; background: #0f172a; border-radius: 8px; padding: 16px; font-size: 13px; color: #94a3b8; min-height: 40px; }
+    table { width: 100%; border-collapse: collapse; }
+    th { background: #0f172a; color: #f59e0b; padding: 10px; text-align: left; }
+    td { padding: 10px; border-bottom: 1px solid #334155; font-size: 13px; color: #94a3b8; }
+    .ativo { color: #22c55e; font-weight: bold; }
+    .inativo { color: #ef4444; font-weight: bold; }
+    .btn-small { padding: 4px 12px; font-size: 12px; margin: 0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>⚙️ Painel de Administração</h1>
+  <a href="/">← Voltar para o sistema</a>
+</header>
+
+<div class="container">
+
+  <!-- TOKEN -->
+  <div class="card">
+    <h2>🔐 Token de Autenticação</h2>
+    <input type="text" id="tokenAtual" placeholder="Token atual para autenticar..." value="meutoken123">
+    <input type="text" id="novoToken" placeholder="Novo token...">
+    <button onclick="alterarToken()">Atualizar Token</button>
+    <div class="resultado" id="resultadoToken"></div>
+  </div>
+
+  <!-- CADASTRAR SCRIPT -->
+  <div class="card">
+    <h2>➕ Cadastrar Novo Script</h2>
+    <input type="text" id="nomeScript" placeholder="Nome do arquivo (ex: provisionar.sh)">
+    <input type="text" id="descricaoScript" placeholder="Descrição (ex: Provisiona ambiente do cliente)">
+    <input type="text" id="parametrosScript" placeholder="Parâmetros (ex: cliente url porta)">
+    <button onclick="cadastrarScript()">Cadastrar Script</button>
+    <div class="resultado" id="resultadoCadastro"></div>
+  </div>
+
+  <!-- LISTAR SCRIPTS -->
+  <div class="card">
+    <h2>📋 Scripts Cadastrados</h2>
+    <button onclick="listarScripts()">Atualizar Lista</button>
+    <div class="resultado" id="resultadoLista">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Descrição</th>
+            <th>Parâmetros</th>
+            <th>Status</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaScripts"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const BASE = "http://localhost:8000";
+
+  function getToken() {
+    return document.getElementById("tokenAtual").value;
+  }
+
+  async function alterarToken() {
+    const novoToken = document.getElementById("novoToken").value;
+    const res = await fetch(`${BASE}/admin/token`, {
+      method: "PUT",
+      headers: { "x-isy-token": getToken(), "Content-Type": "application/json" },
+      body: JSON.stringify({ novo_token: novoToken })
+    });
+    const data = await res.json();
+    document.getElementById("resultadoToken").innerText = data.mensagem || data.detail;
+  }
+
+  async function cadastrarScript() {
+    const nome = document.getElementById("nomeScript").value;
+    const descricao = document.getElementById("descricaoScript").value;
+    const parametros = document.getElementById("parametrosScript").value;
+    const res = await fetch(`${BASE}/admin/scripts`, {
+      method: "POST",
+      headers: { "x-isy-token": getToken(), "Content-Type": "application/json" },
+      body: JSON.stringify({ nome, descricao, parametros })
+    });
+    const data = await res.json();
+    document.getElementById("resultadoCadastro").innerText = data.mensagem || data.detail;
+    listarScripts();
+  }
+
+  async function listarScripts() {
+    const res = await fetch(`${BASE}/admin/scripts`, {
+      headers: { "x-isy-token": getToken() }
+    });
+    const data = await res.json();
+    document.getElementById("tabelaScripts").innerHTML = data.scripts.map(s =>
+      `<tr>
+        <td>${s[0]}</td>
+        <td>${s[1]}</td>
+        <td>${s[2]}</td>
+        <td>${s[3]}</td>
+        <td class="${s[4] ? 'ativo' : 'inativo'}">${s[4] ? 'Ativo' : 'Inativo'}</td>
+        <td><button class="btn-small" onclick="toggleScript(${s[0]}, ${s[4] ? 0 : 1})">${s[4] ? 'Desativar' : 'Ativar'}</button></td>
+      </tr>`
+    ).join("");
+  }
+
+  async function toggleScript(id, ativo) {
+    await fetch(`${BASE}/admin/scripts/${id}?ativo=${ativo}`, {
+      method: "PUT",
+      headers: { "x-isy-token": getToken() }
+    });
+    listarScripts();
+  }
+
+  listarScripts();
+</script>
+
+</body>
+</html>
