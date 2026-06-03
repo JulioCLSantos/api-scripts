@@ -1,112 +1,131 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>API de Scripts</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #0f172a; color: #e2e8f0; font-family: Arial, sans-serif; }
-    header { background: #1e293b; padding: 20px 40px; border-bottom: 2px solid #6366f1; }
-    header h1 { color: #6366f1; font-size: 24px; }
-    header p { color: #94a3b8; font-size: 14px; }
-    .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
-    .card { background: #1e293b; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
-    .card h2 { color: #6366f1; margin-bottom: 16px; font-size: 18px; }
-    input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #e2e8f0; margin-bottom: 12px; font-size: 14px; }
-    button { padding: 10px 24px; border-radius: 8px; border: none; background: #6366f1; color: white; cursor: pointer; font-size: 14px; }
-    button:hover { background: #4f46e5; }
-    .resultado { margin-top: 16px; background: #0f172a; border-radius: 8px; padding: 16px; font-size: 13px; color: #94a3b8; min-height: 60px; }
-    table { width: 100%; border-collapse: collapse; }
-    th { background: #0f172a; color: #6366f1; padding: 10px; text-align: left; }
-    td { padding: 10px; border-bottom: 1px solid #334155; font-size: 13px; color: #94a3b8; }
-    .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; background: #6366f1; color: white; }
-  </style>
+<meta charset="UTF-8">
+<title>ISY.ONE - Shell Automation</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0e0e0;font-family:monospace;min-height:100vh}
+header{background:#0d0d1a;padding:20px 40px;border-bottom:2px solid #8b00ff;display:flex;justify-content:space-between;align-items:center}
+header h1{color:#bf00ff;font-size:22px;text-shadow:0 0 20px #bf00ff;letter-spacing:3px}
+header p{color:#7700cc;font-size:12px}
+header a{color:#bf00ff;text-decoration:none;font-size:13px;border:1px solid #bf00ff;padding:8px 16px;border-radius:4px}
+header a:hover{background:#bf00ff;color:#000}
+.container{max-width:1000px;margin:40px auto;padding:0 20px}
+.card{background:#0d0d1a;border:1px solid #3d0080;border-radius:8px;padding:28px;margin-bottom:28px;box-shadow:0 0 20px rgba(139,0,255,0.1)}
+.card h2{color:#bf00ff;margin-bottom:20px;font-size:15px;letter-spacing:2px}
+input{width:100%;padding:12px 16px;border-radius:6px;border:1px solid #3d0080;background:rgba(0,0,0,0.5);color:#e0e0e0;margin-bottom:12px;font-size:14px;font-family:monospace}
+input:focus{outline:none;border-color:#bf00ff;box-shadow:0 0 10px rgba(191,0,255,0.3)}
+button{padding:12px 28px;border-radius:6px;border:none;background:linear-gradient(135deg,#6600cc,#bf00ff);color:#fff;cursor:pointer;font-size:14px;letter-spacing:1px}
+button:hover{box-shadow:0 0 20px rgba(191,0,255,0.6)}
+.resultado{margin-top:16px;background:rgba(0,0,0,0.7);border:1px solid #3d0080;border-radius:6px;padding:16px;font-size:13px;color:#00ff88;min-height:60px;white-space:pre-wrap}
+.resultado.erro{color:#ff3366}
+table{width:100%;border-collapse:collapse}
+th{background:rgba(139,0,255,0.2);color:#bf00ff;padding:12px;text-align:left;font-size:11px;letter-spacing:2px;border-bottom:1px solid #3d0080}
+td{padding:10px 12px;border-bottom:1px solid rgba(61,0,128,0.5);font-size:12px;color:#aaa}
+.badge{padding:4px 12px;border-radius:20px;font-size:11px;background:linear-gradient(135deg,#6600cc,#bf00ff);color:white;display:inline-block;margin:2px;cursor:pointer}
+.status-ok{color:#00ff88}
+.status-erro{color:#ff3366}
+</style>
 </head>
 <body>
-
 <header>
-  <h1>🚀 API de Execução de Scripts</h1>
-  <p>Gerencie e execute seus scripts automaticamente</p>
+  <div>
+    <h1>&#9889; ISY.ONE SHELL API</h1>
+    <p>&gt; orquestrador automatico de infraestrutura</p>
+  </div>
+  <a href="/admin">&#9881; PAINEL ADMIN</a>
 </header>
-
 <div class="container">
-
-  <!-- TOKEN -->
   <div class="card">
-    <h2>🔐 Autenticação</h2>
-    <input type="text" id="token" placeholder="Digite seu token aqui..." value="meutoken123">
+    <h2>&#128272; AUTENTICACAO</h2>
+    <input type="password" id="token" placeholder="Digite seu X-Isy-Token..." value="meutoken123">
   </div>
-
-  <!-- LISTAR SCRIPTS -->
   <div class="card">
-    <h2>📋 Scripts Disponíveis</h2>
-    <button onclick="listarScripts()">Listar Scripts</button>
-    <div class="resultado" id="resultadoScripts">Clique no botão para listar...</div>
+    <h2>&#128203; SCRIPTS DISPONIVEIS</h2>
+    <button onclick="listarScripts()">&#9654; LISTAR SCRIPTS</button>
+    <div class="resultado" id="resultadoScripts">&gt; aguardando comando...</div>
   </div>
-
-  <!-- EXECUTAR SCRIPT -->
   <div class="card">
-    <h2>▶️ Executar Script</h2>
+    <h2>&#9889; EXECUTAR SCRIPT</h2>
     <input type="text" id="nomeScript" placeholder="Nome do script (ex: teste.sh)">
-    <input type="text" id="parametros" placeholder="Parâmetros (opcional, ex: cliente1)">
-    <button onclick="executarScript()">Executar</button>
-    <div class="resultado" id="resultadoExecutar">O resultado aparecerá aqui...</div>
+    <input type="text" id="parametros" placeholder="Parametros opcionais (ex: cliente1)">
+    <button onclick="executarScript()">&#9654; EXECUTAR</button>
+    <div class="resultado" id="resultadoExecutar">&gt; aguardando execucao...</div>
   </div>
-
-  <!-- LOGS -->
   <div class="card">
-    <h2>📊 Histórico de Execuções</h2>
-    <button onclick="verLogs()">Ver Logs</button>
+    <h2>&#128202; HISTORICO DE EXECUCOES</h2>
+    <button onclick="verLogs()">&#9654; CARREGAR LOGS</button>
     <div class="resultado" id="resultadoLogs">
       <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Script</th>
-            <th>Parâmetros</th>
-            <th>Resultado</th>
-            <th>Horário</th>
-          </tr>
-        </thead>
+        <thead><tr><th>ID</th><th>SCRIPT</th><th>PARAMETROS</th><th>RESULTADO</th><th>STATUS</th><th>HORARIO</th></tr></thead>
         <tbody id="tabelaLogs"></tbody>
       </table>
     </div>
   </div>
-
 </div>
-
 <script>
-  const BASE = "http://localhost:8000";
+const BASE = "http://127.0.0.1:8000";
 
-  function getToken() {
-    return document.getElementById("token").value;
-  }
+function getToken() {
+  return document.getElementById("token").value;
+}
 
-  async function listarScripts() {
-    const res = await fetch(`${BASE}/scripts`, { headers: { token: getToken() } });
+async function listarScripts() {
+  const el = document.getElementById("resultadoScripts");
+  el.className = "resultado";
+  el.innerHTML = "> buscando scripts...";
+  try {
+    const res = await fetch(BASE + "/scripts", { headers: { "x-isy-token": getToken() } });
     const data = await res.json();
-    document.getElementById("resultadoScripts").innerHTML = 
-      data.scripts.map(s => `<span class="badge">${s}</span> `).join("") || "Nenhum script encontrado";
+    if (data.scripts && data.scripts.length > 0) {
+      el.innerHTML = data.scripts.map(s =>
+        "<span class='badge' onclick='document.getElementById(\"nomeScript\").value=\"" + s + "\"'>" + s + "</span>"
+      ).join(" ");
+    } else {
+      el.innerHTML = "> nenhum script encontrado";
+    }
+  } catch(e) {
+    el.className = "resultado erro";
+    el.innerHTML = "> ERRO: " + e.message;
   }
+}
 
-  async function executarScript() {
-    const nome = document.getElementById("nomeScript").value;
-    const parametros = document.getElementById("parametros").value;
-    const res = await fetch(`${BASE}/executar?nome=${nome}&parametros=${parametros}`, {
-      method: "POST", headers: { token: getToken() }
+async function executarScript() {
+  const nome = document.getElementById("nomeScript").value;
+  const parametros = document.getElementById("parametros").value;
+  const el = document.getElementById("resultadoExecutar");
+  el.className = "resultado";
+  el.innerHTML = "> executando " + nome + "...";
+  try {
+    const res = await fetch(BASE + "/executar?nome=" + nome + "&parametros=" + parametros, {
+      method: "POST",
+      headers: { "x-isy-token": getToken() }
     });
     const data = await res.json();
-    document.getElementById("resultadoExecutar").innerText = data.resultado || data.detail;
+    if (data.status === "sucesso") {
+      el.innerHTML = "> STATUS: SUCESSO\n> OUTPUT:\n" + data.resultado;
+    } else {
+      el.className = "resultado erro";
+      el.innerHTML = "> STATUS: FALHA\n> ERRO:\n" + (data.resultado || data.detail);
+    }
+  } catch(e) {
+    el.className = "resultado erro";
+    el.innerHTML = "> ERRO: " + e.message;
   }
+}
 
-  async function verLogs() {
-    const res = await fetch(`${BASE}/logs`, { headers: { token: getToken() } });
+async function verLogs() {
+  try {
+    const res = await fetch(BASE + "/logs", { headers: { "x-isy-token": getToken() } });
     const data = await res.json();
     document.getElementById("tabelaLogs").innerHTML = data.logs.map(log =>
-      `<tr><td>${log[0]}</td><td>${log[1]}</td><td>${log[2]}</td><td>${log[3]}</td><td>${log[4]}</td></tr>`
+      "<tr><td>" + log[0] + "</td><td>" + log[1] + "</td><td>" + log[2] + "</td><td style='max-width:200px;overflow:hidden'>" + log[3] + "</td><td class='" + (log[4] === "sucesso" ? "status-ok" : "status-erro") + "'>" + log[4] + "</td><td>" + log[5] + "</td></tr>"
     ).join("");
+  } catch(e) {
+    console.error(e);
   }
+}
 </script>
-
 </body>
 </html>
